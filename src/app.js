@@ -92,14 +92,6 @@ io.on('connection', function (socket) {
   })
 
   combineEvents(io, socket)
-  // force client disconnect from server
-  socket.on('forceDisconnect', function () {
-    socket.disconnect()
-  })
-
-  socket.on('disconnect', function () {
-    console.log('user disconnected: ' + socket.name)
-  })
 })
 app.set('io', io)
 

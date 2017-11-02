@@ -67,7 +67,7 @@ html
         //    $("#messages").scrollTop($("#messages")[0].scrollHeight);
         //  });
         //});
-      
+
         // socket.io 서버에 접속한다
         var socket = io();
         // 서버로 자신의 정보를 전송한다.
@@ -103,6 +103,9 @@ html
           }
           $("#messages").scrollTop($("#messages")[0].scrollHeight);
         });
+        socket.on("receive_current_user_continue", function(data){
+          console.log(data)
+        })
         // Send 버튼이 클릭되면
         $("form").submit(function(e) {
           e.preventDefault();
@@ -111,5 +114,16 @@ html
         socket.emit("chat", { msg: $msgForm.val() });
           $msgForm.val("");
         });
+        if (window.history && history.pushState) {
+          addEventListener('load', function () {
+            history.pushState(null, null, null); // creates new history entry with same URL
+            addEventListener('popstate', function () {
+              socket.disconnect()
+              socket.emit("forceDisconnect");
+              history.back()
+            });
+          });
+        }
       });
+
 

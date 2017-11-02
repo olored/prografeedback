@@ -10,7 +10,17 @@ let roomSchema = new Schema({
     ref: 'user'
   },
   conversations: [
-    { userId: Schema.ObjectId, nickname: String, body: String, date: Date }
+    {userId: Schema.ObjectId, nickname: String, body: String, date: Date}
+  ],
+  users: [
+    {
+      userId: {
+        type: Schema.ObjectId,
+        ref: 'user'
+      },
+      socketId: String,
+      date: Date
+    }
   ],
   created_at: {type: Date, default: Date.now}
 })
@@ -28,6 +38,42 @@ class Room {
         resolve(result)
       })
     })
+  }
+
+  static async enterUser (roomId, userId, socketId) {
+    this.update(
+      {_id: roomId},
+      {
+        $push: {
+          'users': {
+            userId,
+            socketId
+          }
+        }
+      },
+      (err, result) => {
+        if (err) console.log(err)
+        return Promise.resolve(result)
+      }
+    )
+  }
+
+  static async leaveUser (roomId, userId, socketId) {
+    this.update(
+      {_id: roomId},
+      {
+        $pull: {
+          'users': {
+            userId,
+            socketId
+          }
+        }
+      },
+      (err, result) => {
+        if (err) console.log(err)
+        return Promise.resolve(result)
+      }
+    )
   }
 }
 
