@@ -91,6 +91,9 @@ html
         socket.on("receive_prev_chat_data_complete", function (data) {
          console.log('receive_prev_chat_data_complete')
         });
+        socket.on("receive_current_user_continue", function (data) {
+          console.log(data)
+        })
 
         // 서버로부터의 메시지가 수신되면
         socket.on("s2c chat", function(data) {
@@ -103,9 +106,7 @@ html
           }
           $("#messages").scrollTop($("#messages")[0].scrollHeight);
         });
-        socket.on("receive_current_user_continue", function(data){
-          console.log(data)
-        })
+
         // Send 버튼이 클릭되면
         $("form").submit(function(e) {
           e.preventDefault();
@@ -116,7 +117,7 @@ html
         });
         if (window.history && history.pushState) {
           addEventListener('load', function () {
-            history.pushState(null, null, null); // creates new history entry with same URL
+            history.pushState(null, null, null);
             addEventListener('popstate', function () {
               socket.disconnect()
               socket.emit("forceDisconnect");
