@@ -1,7 +1,14 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+    head
+        meta(charset='UTF-8')
+        title 프로그라피드백
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+        block styles
+    body
+        block content
+        script(src='/javascripts/jquery.min.js')
+        script(src='https://unpkg.com/vue')
+        block script
+

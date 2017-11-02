@@ -1,21 +1,28 @@
-doctype html
-html
-  head
-    meta(charset='euc-kr')
-    title 프로그라피드백
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-  body
+extends layout
+block content
     .container
       h3 PrograFeedback
       iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', width='72%', height='600px', frameborder='0')
       #side
+        pacman-loader#loader(:loading="loading" v-bind:color="color" v-bind:size="size")
         #messages
+          div(v-for="msg in messages")
+            chat-message(:name='msg.nickname' v-bind:body='msg.body')
         form.form-inline
           .form-group
             input#msgForm.form-control(type='text')        
           button.btn.btn-primary(type='submit') Send
         img#balloon(src="/balloon.png", width="30px", height="30px")
+      #users
+        user(v-for="usr in users" v-bind:name='usr.userId.nickname')
       style.
+        #loader{
+          position: absolute;
+          top: 50%;
+          margin-top: -51px;
+          left: 50%;
+          margin-left: -58px;
+        }
         .container { margin: auto; }
         h3 { width: 70vw; height: 5vh; margin-top: 40px;}
         iframe { float: left; }
@@ -26,9 +33,76 @@ html
         form { position: absolute; bottom: 0 }
         .form-control { margin: 10px; width: 50px; }
         #balloon { position: absolute; bottom: 10px; right: 0;}
+block script
     script(src='/javascripts/socket.io.js')
-    script(src='/javascripts/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
+    script(src='/javascripts/vue-spinner.min.js')
     script.
+      var PacmanLoader = VueSpinner.PacmanLoader
+      Vue.component('chat-message', {
+        template: `
+              <span>
+                  <strong>{{ name }}</strong> {{body}}
+              </span>
+          `,
+        props: ['name', 'body'],
+      });
+      var chatArea = new Vue({
+        el: '#side',
+        data: {
+          messages: [
+
+          ],
+          users: [
+
+          ],
+          loading: true,
+          color: 'rgb(93, 197, 150)',
+          size: '25px'
+        },
+        components: {
+          'PacmanLoader': PacmanLoader
+        },
+        methods: {
+          initializeChatList: function(list) {
+            this.messages = list
+            this.$nextTick(function () {
+              $("#messages").scrollTop($("#messages")[0].scrollHeight);
+              setTimeout(function () {
+                chatArea.loading = false
+              }, 200)
+            })
+          }
+        }
+      })
+      Vue.component('user', {
+        template: `
+                <code>{{ name }}</code>
+                `,
+        props: ['name'],
+      });
+      var userArea = new Vue({
+        el: '#users',
+        data: {
+          users: []
+        },
+        methods: {
+          initializeUserList: function (list) {
+            this.users = _.uniqWith(list, function(a,b){
+              return a.userId.nickname === b.userId.nickname
+            })
+          },
+          addUser: function(user){
+            this.users = this.users.push(user)
+          },
+          deleteUser: function (user) {
+            this.users = _.remove(this.users, function (u) {
+              return u.userId.nickname === user.userId.nickname;
+            });
+          }
+        }
+      })
+
       $(function(){
         function sizeUp() {
           $('#balloon').width($('#balloon').width() + 1);
@@ -59,14 +133,6 @@ html
         }).click(function() {
             sizeUp();
         });
-        
-        //$.each(!{conversations}, function(key, val) {
-        //  var conversation = JSON.parse(JSON.stringify(val))
-        //  $.each(conversation, function(key, val) {
-        //    $("#messages").append("<div><strong>" + key + " : </strong>" + val + "</div>");
-        //    $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        //  });
-        //});
 
         // socket.io 서버에 접속한다
         var socket = io();
@@ -77,22 +143,24 @@ html
         });
         // 서버로부터의 메시지가 수신되면
         socket.on("login", function (data) {
-          $("#messages").append("<div><strong>" + data + "</strong> has joined</div>");
+          userArea.addUser(data)
+        });
+        socket.on("logout", function (data) {
+          userArea.deleteUser(data)
         });
 
         // 기존 채팅 데이터를 수신한다
         socket.emit("receive_prev_chat_data");
+
         socket.on("receive_prev_chat_data_continue", function (received) {
-          received.forEach(function(data) {
-            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
-          })
-          $("#messages").scrollTop($("#messages")[0].scrollHeight);
+          chatArea.initializeChatList(received)
         });
         socket.on("receive_prev_chat_data_complete", function (data) {
          console.log('receive_prev_chat_data_complete')
         });
         socket.on("receive_current_user_continue", function (data) {
           console.log(data)
+          userArea.initializeUserList(data)
         })
 
         // 서버로부터의 메시지가 수신되면
@@ -115,6 +183,7 @@ html
         socket.emit("chat", { msg: $msgForm.val() });
           $msgForm.val("");
         });
+
         if (window.history && history.pushState) {
           addEventListener('load', function () {
             history.pushState(null, null, null);

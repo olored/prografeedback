@@ -12,7 +12,11 @@ module.exports = function (io, socket) {
     // 접속된 모든 클라이언트에게 메시지를 전송한다
     await Room.enterUser(data.room, socket.userData._id, socket.id)
 
-    io.to(socket.room).emit('login', data.name)
+    io.to(socket.room).emit('login', {
+      userId: {
+        nickname: socket.userData.nickname
+      }
+    })
   })
   return socket
 }

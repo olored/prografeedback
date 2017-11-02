@@ -1,10 +1,5 @@
-doctype html
-html
-  head
-    meta(charset='euc-kr')
-    title 프로그라피드백 룸
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-  body
+extends layout
+block content
     .container
       h3 PrograFeedback
       a(href='/logout') logout
@@ -15,7 +10,7 @@ html
           .owner owner  
           .created created   
         each room, i in rooms
-          .row(onclick='chat(this, "#{room._id}")')
+          .row(onclick='chat(this, "'+room._id.toString()+'")')
             .number= i
             .pptname= room.ppt
             .owner= room.owner.nickname
@@ -28,6 +23,7 @@ html
         .pptname { width: 50%; height: 100%; float: left;}
         .owner { width: 10%; height: 100%; float: left;}
         .created { width: 30%; height: 100%; float: left;}
+block script
     script(src='javascripts/socket.io.js')
     script(src='javascripts/jquery.min.js')
     script.

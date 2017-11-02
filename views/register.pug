@@ -1,10 +1,5 @@
-doctype html
-html
-  head
-    meta(charset='UTF-8')
-    title 프로그라피드백 
-    link(rel='stylesheet', href='stylesheets/style.css')
-  body
+extends layout
+block content
     .login
       .login-triangle
       h2.login-header REGISTER
@@ -20,7 +15,7 @@ html
             input(type='password', name='pwdchk', placeholder='비밀번호확인')
           p
             input(type='submit', value='회원가입')
-    script(src='javascripts/jquery.min.js')
+block script
     script.
       $(function() {
       var err = "!{err}";
