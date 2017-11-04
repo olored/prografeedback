@@ -1,8 +1,7 @@
 extends layout
 block content
-    .container
-      h3 PrograFeedback
-      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', width='72%', height='600px', frameborder='0')
+    .container_temp
+      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}' frameborder='0')
       #side
         pacman-loader#loader(:loading="loading" v-bind:color="color" v-bind:size="size")
         #messages
@@ -13,8 +12,8 @@ block content
             input#msgForm.form-control(type='text')        
           button.btn.btn-primary(type='submit') Send
         img#balloon(src="/balloon.png", width="30px", height="30px")
-      #users
-        user(v-for="usr in users" v-bind:name='usr.userId.nickname')
+      //#users
+      //  user(v-for="usr in users" v-bind:name='usr.userId.nickname')
       style.
         #loader{
           position: absolute;
@@ -23,16 +22,95 @@ block content
           left: 50%;
           margin-left: -58px;
         }
-        .container { margin: auto; }
-        h3 { width: 70vw; height: 5vh; margin-top: 40px;}
-        iframe { float: left; }
-        #side { list-style-type: none; margin: 0; padding: 0; width: 28%; height: 600px; position: relative; float: left;}
-        #messages { width: 100%; height: 550px; overflow: auto; }
-        #messages div { padding: 5px 10px; }
-        #messages div:nth-child(odd) { background: #eee; }
-        form { position: absolute; bottom: 0 }
-        .form-control { margin: 10px; width: 50px; }
-        #balloon { position: absolute; bottom: 10px; right: 0;}
+
+        body {
+          width: 1300px;
+          margin: 0 auto;
+          font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
+          font-size: 14px;
+          color: #333;
+          line-height: 1.42857143;
+        }
+
+        .container_temp {
+          margin-top: 50px;
+        }
+
+        h3 {
+          width: 70vw;
+          height: 5vh;
+          margin-top: 40px;
+        }
+
+        iframe {
+          float: left;
+          width: 1000px;
+          height: 700px;
+        }
+
+        #side {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          width: 300px;
+          height: 700px;
+          position: relative;
+          float: left;
+        }
+
+        #messages {
+          width: 100%;
+          height: 650px;
+          overflow: auto;
+        }
+
+        #messages div {
+          padding: 5px 10px;
+        }
+
+        #messages div:nth-child(odd) {
+          background: #eee;
+        }
+
+        form {
+          position: absolute;
+          bottom: 0;
+        }
+
+        #msgForm {
+          margin: 10px;
+          width: 190px;
+          height: 24px;
+          border: 1px solid #65C7D0;
+          border-radius: 5px;
+          vertical-align: middle;
+          outline: none;
+        }
+
+        .form-group {
+          display: inline-block;
+        }
+
+        #balloon {
+          position: absolute;
+          bottom: 10px;
+          right: 0;
+        }
+
+        .btn {
+          width: 50px;
+          height: 30px;
+          background-color: #65C7D0;
+          color: white;
+          padding: 5px;
+          text-align: center;
+          border: 1px solid white;
+          border-raius: 5px;
+          -webkit-border-radius: 5px;
+          -moz-border-radius: 5px;
+          font-size: 8px;
+          vertical-align: middle;
+        }
 block script
     script(src='/javascripts/socket.io.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
