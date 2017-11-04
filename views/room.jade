@@ -1,0 +1,119 @@
+doctype html
+html
+  head
+    meta(charset='euc-kr')
+    title 프로그라피드백
+  body
+    .container
+      iframe(src='https://view.officeapps.live.com/op/embed.aspx?src=http://prografeed.com/#{pptname}', frameborder='0')
+      #side
+        #messages
+        form.form-inline
+          .form-group
+            input#msgForm.form-control(type='text')        
+          button.btn.btn-primary(type='submit') Send
+        img#balloon(src="/balloon.png", width="30px", height="30px")
+      style.
+        body { width: 1300px; margin: 0 auto; font-family: "Helvetica Nene", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.42857143; }
+        .container { margin-top: 50px; } 
+        h3 { width: 70vw; height: 5vh; margin-top: 40px;}
+        iframe { float: left; width: 1000px; height: 700px; }
+        #side { list-style-type: none; margin: 0; padding: 0; width: 300px; height: 700px; position: relative; float: left;}
+        #messages { width: 100%; height: 650px; overflow: auto; }
+        #messages div { padding: 5px 10px; }
+        #messages div:nth-child(odd) { background: #eee; }
+        form { position: absolute; bottom: 0; }
+        #msgForm{ margin: 10px; width: 190px; height: 24px; border: 1px solid #65C7D0; border-radius: 5px; vertical-align: middle;  outline: none; }
+        .form-group { display: inline-block; }
+        #balloon { position: absolute; bottom: 10px; right: 0;}
+        .btn { width: 50px; height: 30px; background-color: #65C7D0; color: white; padding: 5px; text-align: center; border: 1px solid white; border-raius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; font-size: 8px; vertical-align: middle; }
+    script(src='/javascripts/socket.io.js')
+    script(src='/javascripts/jquery.min.js')
+    script.
+      $(function(){
+        function sizeUp() {
+          $('#balloon').width($('#balloon').width() + 1);
+          $('#balloon').height($('#balloon').height() + 1);
+        }
+        var sizeUpId;
+        $('#balloon').mousedown(function() {
+          event.preventDefault();
+          sizeUpId = setInterval(sizeUp, 10);
+        }).mouseup(function() {
+            clearInterval(sizeUpId);
+            $("form").append("<img src='/boom.png' id='boom' style='position: absolute; bottom: 10px; right: 0;'>");
+            var boom = $("form").find("#boom");
+            boom.width($('#balloon').width() + 1);
+            boom.height($('#balloon').height() + 1);
+            $('#balloon').width("30px");
+            $('#balloon').height("30px");
+            $('#balloon').fadeOut(10);
+            
+            socket.emit("chat", { msg: "별풍 " + Math.ceil(Math.pow(3, boom.width()/30)) + "개를 쏘았습니다!"});
+ 
+            $.when(boom.fadeOut(500))
+                        .done(function() {
+               boom.remove();
+               $('#balloon').fadeIn(10);
+            });
+            
+        }).click(function() {
+            sizeUp();
+        });
+        
+        //$.each(!{conversations}, function(key, val) {
+        //  var conversation = JSON.parse(JSON.stringify(val))
+        //  $.each(conversation, function(key, val) {
+        //    $("#messages").append("<div><strong>" + key + " : </strong>" + val + "</div>");
+        //    $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        //  });
+        //});
+      
+        // socket.io 서버에 접속한다
+        var socket = io();
+        // 서버로 자신의 정보를 전송한다.
+        socket.emit("login", {
+          name: "!{nickname}",
+          room: "!{roomId}"
+        });
+        // 서버로부터의 메시지가 수신되면
+        socket.on("login", function (data) {
+          $("#messages").append("<div><strong>" + data + "</strong> has joined</div>");
+        });
+
+        // 기존 채팅 데이터를 수신한다
+        socket.emit("receive_prev_chat_data");
+        socket.on("receive_prev_chat_data_continue", function (received) {
+          received.forEach(function(data) {
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
+          })
+          $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        });
+        socket.on("receive_prev_chat_data_complete", function (data) {
+         console.log('receive_prev_chat_data_complete')
+        });
+
+        // 서버로부터의 메시지가 수신되면
+        socket.on("s2c chat", function(data) {
+          var reg = /별풍 [0-9]*개를 쏘았습니다!/;
+          console.log($("#messages")[0].scrollHeight);
+          if (reg.test(data.body)) {
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong><strong>" + data.body + "</strong></br><img src='/mini.png'></div>");
+            console.log($("#messages")[0].scrollHeight);
+          }
+          else {
+            $("#messages").append("<div><strong>" + data.nickname + " : </strong>" + data.body + "</div>");
+          }
+          console.log($("#messages")[0].scrollHeight);
+          $("#messages").scrollTop($("#messages")[0].scrollHeight);
+        });
+        // Send 버튼이 클릭되면
+        $("form").submit(function(e) {
+          e.preventDefault();
+          var $msgForm = $("#msgForm");
+        // 서버로 메시지를 전송한다.
+        socket.emit("chat", { msg: $msgForm.val() });
+          $msgForm.val("");
+        });
+      });
+
