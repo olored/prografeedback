@@ -52,6 +52,25 @@
     components: {
       VueDraggableResizable,
       pdf
+    },
+    mounted: function () {
+      var _this = this
+      window.addEventListener('keyup', function (event) {
+        // If down arrow was pressed...
+        switch (event.keyCode) {
+          case 37:
+            if (_this.page !== 1) {
+              _this.page = _this.page - 1
+              _this.$forceUpdate()
+            }
+            break
+          case 39:
+            _this.page = _this.page + 1
+            _this.$forceUpdate()
+            break
+        }
+        console.log(_this.page)
+      })
     }
   }
 </script>
