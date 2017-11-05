@@ -9,6 +9,9 @@ let roomSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'user'
   },
+  thumbnail: {
+    type: String
+  },
   conversations: [
     {userId: Schema.ObjectId, nickname: String, body: String, date: Date}
   ],
