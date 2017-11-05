@@ -105,7 +105,7 @@ db.once('open', function () {
   console.log('Connected to mongod server')
 })
 
-const config = require('../config.json')
+const config = require('../config/config.json')
 mongoose.connect(config.dev.mongo, {
   useMongoClient: true
 })
