@@ -14,6 +14,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage})
 
+router.get('/', async (req, res) => {
+  Room
+    .find()
+    .populate('owner', 'nickname')
+    .sort({'created_at': 1})
+    .exec((err, rooms) => {
+      if (err) console.log(err)
+      res.json(rooms)
+    })
+})
+
 const filepreview = require('filepreview')
 
 router.get('/create', function (req, res, next) {

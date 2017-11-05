@@ -7,20 +7,6 @@ const path = require('path')
 
 router.use(fileUpload())
 
-router.get('/', async (req, res) => {
-  if (req.session.user) {
-    Room
-      .find()
-      .populate('owner', 'nickname')
-      .sort({'created_at': 1})
-      .exec((err, rooms) => {
-        if (err) console.log(err)
-        res.render('rooms', {rooms, nickname: req.session.user.nickname})
-      })
-  } else {
-    res.render('login')
-  }
-})
 router.get('/logout', async (req, res) => {
   req.session.user = null
   res.redirect('/')

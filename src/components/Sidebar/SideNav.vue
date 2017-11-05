@@ -4,7 +4,7 @@
          <div class="sidebar-logo-wrap">
             <div class="d-flex justify-content-between mb-20">
               <div class="align-item-center">
-               <a href="index.html" class="site-logo"><img src="/static/img/logo.png" class="img-fluid" alt="site logo" width="110" height="60"></a>
+               <a href="index.html" class="site-logo">Prografeed</a>
               </div>
                <div class="ham-icon align-item-center">
                  <button type="button" class="c-hamburger c-hamburger--rot" name="button" @click="emitCollapsedSidebar">
@@ -20,10 +20,10 @@
                <span class="badge badge-success badge-label-sm badge-thumb-top-right badge-pill fa-notify">&nbsp;</span>
               </div>
                <b-dropdown variant="link" size="sm" text="Jan Doe" class="admin-section">
-                 <b-dropdown-item href="#">My Profile</b-dropdown-item>
-                 <b-dropdown-item href="#">Calendar</b-dropdown-item>
-                 <b-dropdown-item href="#">My Inbox</b-dropdown-item>
-                 <b-dropdown-item href="#">My Tasks</b-dropdown-item>
+                 <!--<b-dropdown-item href="#">My Profile</b-dropdown-item>-->
+                 <!--<b-dropdown-item href="#">Calendar</b-dropdown-item>-->
+                 <!--<b-dropdown-item href="#">My Inbox</b-dropdown-item>-->
+                 <!--<b-dropdown-item href="#">My Tasks</b-dropdown-item>-->
                  <b-dropdown-item href="#">Log Out</b-dropdown-item>
                </b-dropdown>
             </div>
@@ -46,18 +46,6 @@
                  </ul>
               </nav>
             </div>
-        </div>
-        <div class="idb-server-progress p-30">
-          <div class="progress-wrap mb-30">
-            <h5>Today Sales</h5>
-            <b-progress :value="30" :max="50" class="mb-15" height="5px"></b-progress>
-            <p class="fs-12">15200 Items sold</p>
-          </div>
-          <div class="progress-wrap mb-30">
-            <h5>Customer Target</h5>
-            <b-progress :value="70" :max="100" class="mb-15" height="5px" variant="danger"></b-progress>
-            <p class="fs-12">78% of the month</p>
-          </div>
         </div>
       </vue-perfect-scrollbar>
    </div>

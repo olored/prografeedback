@@ -9,7 +9,7 @@
         <div class="base-container">
           <div class="inner-container">
             <div class="page-title">
-              <h2 class="text-capitalize"><i class="ti-angle-left"></i>{{ pageBreadcrumbs }}</h2>
+              <h2 class="text-capitalize">{{ pageBreadcrumbs }}</h2>
             </div>
             <transition name="fade" mode="out-in">
               <router-view></router-view>
